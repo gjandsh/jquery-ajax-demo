@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+	<meta charset="UTF-8">
+	<title>ajax sample</title>
+	<style>
+		ul,
+		li {
+			list-style: none;
+			padding: 0;
+		}
+
+		li {
+			border: 1px solid pink;
+			line-height: 3em;
+			margin: 10px;
+			font-size: 14px;
+			text-align: center;
+			border-radius: 2px;
+		}
+
+		div {
+			text-align: center;
+		}
+
+		button {
+			border: 1px solid #ddd;
+			border-radius: 2px;
+			line-height: 3em;
+			background-color: #fff;
+			font-weight: 700;
+			color: pink;
+			outline: none;
+		}
+
+		li:hover,
+		button:hover {
+			box-shadow: inset 0 0 5px 1px #ddd;
+		}
+	</style>
+	<script src='//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+</head>
+
+<body>
+	<ul>
+		<li>内容1</li>
+		<li>内容2</li>
+	</ul>
+	<div>
+		<button>LOAD MORE</button>
+	</div>
+</body>
+<script>
+	var $btn = $('button')
+	var ajaxLock = false    //设置锁
+	var $ul = $('ul')
+	var currentIndex = 3
+	var length = 5
+	$btn.on('click', function (e) {
+		e.preventDefault()
+		$btn.text('Loading...')
+		if (ajaxLock) {
+			return
+		}
+		ajaxLock = true;
+		$.ajax({
+			url: '/loadmore',
+			method: 'GET',
+			data: {
+				index: currentIndex,
+				length: length
+			}
+		}).done(function (response) {
+			loading(JSON.parse(response));
+			ajaxLock = false;
+			currentIndex += length;
+		}).fail(function (jqXHR, textStatus) {
+			console.log(textStatus)
+		})
+	})
+	function loading(data) {
+		for (i = 0; i < data.length; i++) {
+			var $li = $(`<li></li>`);
+			$li.text(data[i])
+			$ul.append($li)		
+}
+		$btn.text('Load More')
+	}
+</script>
+
+</html>
